@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.urls import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
@@ -54,7 +54,7 @@ def confirmAsk(request):
     return 0
 
 @login_checker
-def confirmApply(request):
+def confirmEntry(request):
     return 0
 
 @login_checker

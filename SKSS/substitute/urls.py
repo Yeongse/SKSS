@@ -13,6 +13,6 @@ urlpatterns = [
     path('revise/<int:ask_id>', views.revise, name='revise'), 
     path('make', views.make, name='make'), 
     path('confirmAsk', views.confirmAsk, name='confirmAsk'), 
-    path('confirmApply', views.confirmApply, name='confirmApply'), 
+    path('confirmEntry', views.confirmEntry, name='confirmEntry'), 
     path('logout', views.logout, name='logout'), 
 ]
