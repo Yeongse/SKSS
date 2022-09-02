@@ -32,7 +32,7 @@ class Condition(models.Model):
 
 class SubstituteAsk(models.Model):
     date = models.DateField()
-    client = models.ForeignKey(to=ClassLeader, on_delete=models.CASCADE)
+    client = models.ForeignKey(to=ClassLeader, related_name='asks', on_delete=models.CASCADE)
     extra = models.TextField(blank=True, null=True)
     conditions = models.ManyToManyField(Condition, blank=True, related_name='asks')
     
@@ -42,8 +42,8 @@ class SubstituteAsk(models.Model):
 class Entry(models.Model):
     date = models.DateField()
     state = models.CharField(max_length=64)
-    CL = models.ForeignKey(to=ClassLeader, on_delete=models.CASCADE)
-    ask = models.ForeignKey(to=SubstituteAsk, related_name='entries')
+    CL = models.ForeignKey(to=ClassLeader, related_name='entries', on_delete=models.CASCADE)
+    ask = models.ForeignKey(to=SubstituteAsk, related_name='entries', on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.date}: {self.CL}'

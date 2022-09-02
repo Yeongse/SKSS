@@ -1,0 +1,22 @@
+{% extends 'substitute/layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+    <h1 class='theme'>ログイン画面</h1>
+
+    {% if messages %}
+        <div class='messages messages-fail' style='list-style: none;'>
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class='form-wrapper'>
+        <form action="{% url 'substitute:login' %}" method='post'>
+            {% csrf_token %}
+            {{ form | crispy }}
+            <input type='submit'>
+        </form>
+    </div>
+{% endblock %}
