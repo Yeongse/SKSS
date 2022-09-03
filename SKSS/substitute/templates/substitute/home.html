@@ -1,4 +1,32 @@
-{% extends 'shift/layout.html' %}
+{% extends 'substitute/layout.html' %}
+
+{% block head %}
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        const calendarVisualizer = document.getElementById("calandar-visualizer");
+        const tableVisualizer = document.getElementById("table-visualizer");
+        const calendarDisplay = document.getElementById("calendar-display");
+        const tableDisplay = document.getElementById("table-display");
+
+        console.log(calendarDisplay.clientHeight);
+        tableDisplay.style.height = calendarDisplay.clientHeight + 'px';
+
+        calendarVisualizer.onclick = function(){
+            calendarDisplay.style.display = "block";
+            tableDisplay.style.display = "none";
+            calendarVisualizer.style.backgroundColor = "#808080";
+            tableVisualizer.style.backgroundColor = "#ffffff";
+        };
+        tableVisualizer.onclick = function(){
+            calendarDisplay.style.display = "none";
+            tableDisplay.style.display = "block";
+            calendarVisualizer.style.backgroundColor = "#ffffff";
+            tableVisualizer.style.backgroundColor = "#808080";
+        };
+        
+    })
+</script>
+{% endblock head %}
 
 {% block body %}
     <h1 class="theme">ホーム画面</h1>
@@ -10,79 +38,100 @@
             {% endfor %}
         </div>
     {% endif %}
+    
+    <p class="btn" id="calandar-visualizer" style="background-color: #808080;"><small>カレンダー</small></p>
+    <p class="btn" id="table-visualizer"><small>テーブル</small></p>
 
-    {% comment %} 前後の月への遷移 {% endcomment %}
-    <a href="{% url 'shift:home' calendar_data.month_previous.year calendar_data.month_previous.month %}">前の月</a>
-    {{ calendar_data.month_current | date:"Y年m月" }}
-    <a href="{% url 'shift:home' calendar_data.month_next.year calendar_data.month_next.month %}">次の月</a>
+    <div id="calendar-display">
+        {% comment %} 前後の月への遷移 {% endcomment %}
+        <a href="{% url 'substitute:home' calendar_data.month_previous.year calendar_data.month_previous.month %}">前の月</a>
+        {{ calendar_data.month_current | date:"Y年m月" }}
+        <a href="{% url 'substitute:home' calendar_data.month_next.year calendar_data.month_next.month %}">次の月</a>
 
-    <table class="table table-bordered table-sm table-striped">
-        {% comment %} 曜日が一番上にヘッダーとして並ぶ {% endcomment %}
-        <thead>
-            <tr>
-                {% for w in calendar_data.week_names %}
-                    <th>{{ w }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-
-        {% comment %} カレンダーの中身 {% endcomment %}
-        <tbody class="inner-calendar">
-        {% for week_days_tasks in month_days_tasks%}
-
-            <tr>
-                {% for day_days_tasks in week_days_tasks %}
-                    {% if calendar_data.now == day_days_tasks.day %}
-                        <td class="table-success">
-                    {% else %}
-                        <td>
-                    {% endif %}
-                    
-                            {% comment %} その日の日付とそこに含まれる業務を箇条書きでカレンダーに1マスずつ格納していく {% endcomment %}
-                            <ul style="list-style: none;">
-                                <li>
-                                {% comment %} 前後の月が含まれる場合は何月かも書く {% endcomment %}
-                                {% if calendar_data.month_current.month != day_days_tasks.day.month %}
-                                    {{ day_days_tasks.day | date:"m/d" }}
-                                {% else %}
-                                    {{ day_days_tasks.day.day }}
-                                {% endif %}
-                                </li>
-                                
-                                {% comment %} その業務と今のところ配属されている人数の辞書がtask_and_member {% endcomment %}
-                                {% for task_and_member in day_days_tasks.task_and_members %}
-                                <li> 
-                                    <a href="{% url 'shift:specification' task_and_member.task.id %}">
-                                    {% if task_and_member.member_num < task_and_member.task.capacity %}
-                                        &#9675;
-                                    {% else %}
-                                        X
-                                    {% endif %}
-                                        {{ task_and_member.task.startTime }}〜{{ task_and_member.task.endTime }} {{ task_and_member.task.name }}
-                                    </a>
-                                </li>
-                                {% empty %}
-                                <li></li>
-                                {% endfor %}
-                            </ul>
-                        </td>
+        <table class="table table-bordered table-sm table-striped">
+            {% comment %} 曜日が一番上にヘッダーとして並ぶ {% endcomment %}
+            <thead>
+                <tr>
+                    {% for w in calendar_data.week_names %}
+                        <th>{{ w }}</th>
                     {% endfor %}
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                </tr>
+            </thead>
+
+            {% comment %} カレンダーの中身 {% endcomment %}
+            <tbody class="inner-calendar">
+            {% for week_days_asks in month_days_asks%}
+                <tr>
+                    {% for day_days_asks in week_days_asks %}
+                        {% if calendar_data.now == day_days_asks.day %}
+                            <td class="table-success">
+                        {% else %}
+                            <td>
+                        {% endif %}
+                                {% comment %} その日の日付とそこに含まれる業務を箇条書きでカレンダーに1マスずつ格納していく {% endcomment %}
+                                <ul style="list-style: none;">
+                                    <li>
+                                    {% comment %} 前後の月が含まれる場合は何月かも書く {% endcomment %}
+                                    {% if calendar_data.month_current.month != day_days_asks.day.month %}
+                                        {{ day_days_asks.day | date:"m/d" }}
+                                    {% else %}
+                                        {{ day_days_asks.day.day }}
+                                    {% endif %}
+                                    </li>
+                                    
+                                    {% for ask in day_days_asks.asks %}
+                                    <li>
+                                        <a href="{% url 'substitute:specification' ask.id %}">
+                                        {% if ask.contractor == null %}
+                                            &#9675;
+                                        {% else %}
+                                            X
+                                        {% endif %}
+                                            {{ ask.client }}
+                                        </a>
+                                    </li>
+                                    {% empty %}
+                                    <li></li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="table-display" style="display:none; overflow: scroll;">
+        <table class="table table-bordered table-sm table-striped">
+            <thead>
+                <tr>
+                    <td>募集状況</td>
+                    <td>代行日時</td>
+                    <td>代行依頼者</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ask in asks_after_now %}
+                <tr>
+                    <td>{% if ask.contractor == null %} &#9675; {% else %} X {% endif %}</td>
+                    <td>{{ ask.date }}</td>
+                    <td>{{ ask.client }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     <p class="complement">&#9675;: 募集中, X: 締切</p>
 
-    {% if worker.is_admin %}
-        <a href="{% url 'shift:make' 0 %}" class="btn btn-primary">新しい業務を作成する</a>
-        <a href="{% url 'shift:register' %}" class="btn btn-primary">新しい従業員を登録する</a>
-        <a href="{% url 'shift:delete' %}" class="btn btn-primary">従業員を削除する</a>
-        <a href="{% url 'shift:instruction' %}" class="btn btn-primary">このアプリの説明書を見る</a>
-    {% else %}
-        <a href="{% url 'shift:confirm' %}" class="btn btn-primary">勤務確認</a>
-    {% endif %}
-    
-    <a href="{% url 'shift:personal' %}" class="btn btn-primary">登録情報の変更</a>
-    <a href="{% url 'shift:feedback' %}" class="btn btn-primary">開発者へのフィードバック</a>
-    <a href="{% url 'shift:logout' %}" class="btn btn-primary">ログアウトする</a>
+    <a href="{% url 'substitute:make' %}" class="btn btn-primary">新しい代行依頼を作成する</a>
+    <a href="{% url 'substitute:confirmAsk' %}" class="btn btn-primary">出した代行依頼を確認する</a>
+    <a href="{% url 'substitute:confirmEntry' %}" class="btn btn-primary">応募した代行依頼を確認する</a>
+    <a href="{% url 'substitute:logout' %}" class="btn btn-primary">ログアウトする</a>
 {% endblock %}

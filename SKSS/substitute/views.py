@@ -35,7 +35,6 @@ def find_cl_by_staffID(_staffID):
     cl = ClassLeader.objects.filter(staffID=_staffID)
     return cl
 
-
 @login_checker
 def index(request):
     return HttpResponseRedirect(reverse('substitute:home', args=[now.year, now.month]))
@@ -77,11 +76,59 @@ def login(request):
 
 @login_checker
 def initialize(request):
-    return 0
+    message = ""
+    cl = ClassLeader.objects.get(id=request.session['cl_id'])
+
+    if request.method == 'POST':
+        form = InitializeForm(request.POST)
+        if form.is_valid():
+            input_password1 = form.cleaned_data['password1']
+            input_password2 = form.cleaned_data['password2']
+
+            # 2回入力のパスワードが合っているかの確認
+            if input_password1 == input_password2:
+                # 変更なしを許さない
+                if input_password1 == '0000':
+                    message = 'パスワードを変更してください'
+                else:
+                    cl.password = make_password(input_password1)
+                    cl.save()
+                return HttpResponseRedirect(reverse('substitute:home', args=[now.year, now.month]))
+            else:
+                message = 'パスワードが一致していません'
+
+    return render(request, 'substitute/initialize.html', {
+        'message': message, 
+        'form': InitializeForm()
+    })
 
 @login_checker
 def home(request, year, month):
-    return 0
+    from . import mixins
+    cl = ClassLeader.objects.get(id=request.session['cl_id'])
+
+    # カレンダー表示に使う情報
+    calendar = mixins.MonthCalendarMixin()
+    calendar_data = calendar.get_month_calendar(year, month)
+    month_days_asks = []
+    for week in calendar_data['month_days']:
+        week_days_asks = []
+        # ある日の代行依頼を取得, 日付とセットで保存してhtmlに渡す
+        for day in week:
+            day_asks = SubstituteAsk.objects.filter(date=day)
+            day_days_asks = {'day': day, 'asks': day_asks}
+            week_days_asks.append(day_days_asks)
+        month_days_asks.append(week_days_asks)
+    
+    # テーブル表示に使う情報
+    asks_after_now = SubstituteAsk.objects.filter(date__gte=now).order_by('date')
+
+    return render(request, 'substitute/home.html', {
+        'calendar_data': calendar_data, 
+        'month_days_asks': month_days_asks, 
+        'asks_after_now': asks_after_now, 
+        'cl': cl
+    })
 
 @login_checker
 def specification(request, ask_id):

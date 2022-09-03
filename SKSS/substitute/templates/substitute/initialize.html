@@ -1,0 +1,15 @@
+{% extends 'substitute/layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+    <h1 class="theme">初期パスワードの変更画面</h1>
+    <p class="message">{{ message }}</p>
+
+    <div class="form-wrapper">
+        <form action="{% url 'substitute:initialize' %}" method="post" class="need-check">
+            {% csrf_token %}
+            {{ form | crispy }}
+            <input type="submit">
+        </form>
+    </div>
+{% endblock %}
