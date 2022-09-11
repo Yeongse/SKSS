@@ -1,3 +1,4 @@
+from pickletools import read_uint1
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
@@ -8,6 +9,7 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import Q
+import json
 
 # Create your views here.
 from .models import Course, ClassLeader, Condition, SubstituteAsk, Entry
@@ -15,6 +17,7 @@ from .forms import LoginForm, InitializeForm
 
 import datetime
 now = datetime.datetime.now()
+japanese_days = ['月', '火', '水', '木', '金', '土', '日']
 
 def login_checker(func):
     def checker(request, **kwargs):
@@ -24,7 +27,7 @@ def login_checker(func):
             return func(request, **kwargs)
     return checker
 
-def is_email(_string):
+def get_is_email(_string):
     return '@' in _string
 
 def find_cl_by_email(_email):
@@ -34,6 +37,14 @@ def find_cl_by_email(_email):
 def find_cl_by_staffID(_staffID):
     cl = ClassLeader.objects.filter(staffID=_staffID)
     return cl
+
+def get_is_qualified(_conditions, _qualifications):
+    is_ok = 1
+    for condition in _conditions:
+        if condition not in _qualifications:
+            is_ok = 0
+    return is_ok
+
 
 @login_checker
 def index(request):
@@ -45,7 +56,7 @@ def login(request):
         if form.is_valid():
             identification = form.cleaned_data['identification']
             password = form.cleaned_data['password']
-            if is_email(identification):
+            if get_is_email(identification):
                 matched_cls = find_cl_by_email(identification)
             else:
                 matched_cls = find_cl_by_staffID(identification)
@@ -124,15 +135,48 @@ def home(request, year, month):
     asks_after_now = SubstituteAsk.objects.filter(date__gte=now).order_by('date')
 
     return render(request, 'substitute/home.html', {
+        'cl': cl, 
         'calendar_data': calendar_data, 
         'month_days_asks': month_days_asks, 
-        'asks_after_now': asks_after_now, 
-        'cl': cl
+        'asks_after_now': asks_after_now
     })
 
 @login_checker
 def specification(request, ask_id):
-    return 0
+    cl = ClassLeader.objects.get(id=request.session['cl_id'])
+    ask = SubstituteAsk.objects.get(id=ask_id)
+
+    if request.method == 'POST':
+        entry = Entry(
+            date=now,
+            state='応募中', 
+            cl=cl, 
+            ask=ask)
+        entry.save()
+        messages.success(request, f'応募が完了しました')
+        return HttpResponseRedirect(reverse('substitute:home', args=[now.year, now.month]))
+    
+    ask_day = japanese_days[ask.date.weekday()]
+    assumed_courses = ask.client.courses.filter(day=ask_day)
+    
+    conditions = ask.conditions.all()
+    qualifications = cl.qualifications.all()
+    conditions = [condition.name for condition in conditions]
+    qualifications = [qualification.name for qualification in qualifications]
+    is_qualified = get_is_qualified(conditions, qualifications)
+
+    entries = ask.entries.all()
+    is_entry = sum([1 if entry.cl==cl else 0 for entry in entries])
+
+    return render(request, 'substitute/specification.html', {
+        'cl': cl, 
+        'ask': ask, 
+        'assumed_courses': assumed_courses, 
+        'conditions': json.dumps(conditions), 
+        'entries': entries, 
+        'is_qualified': is_qualified, 
+        'is_entry': is_entry
+    })
 
 @login_checker
 def revise(request, ask_id):
@@ -152,4 +196,5 @@ def confirmEntry(request):
 
 @login_checker
 def logout(request):
-    return 0
+    request.session['cl_id'] = None
+    return HttpResponseRedirect(reverse('substitute:login'))

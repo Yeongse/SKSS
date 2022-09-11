@@ -1,6 +1,129 @@
+/* marginは上, 右, 下, 左 */
+
+
+/* 共通 */
+a {
+    text-decoration: none;
+}
+a:hover {
+    opacity: 0.6;
+}
+thead {
+    background-color: navajowhite;
+}
+ul {
+    list-style: none;
+}
+ul li {
+    position: relative;
+    left: -30px;
+}
+.content {
+    width: 90vw;
+    margin: auto;
+}
+input {
+    margin-bottom: 20px;
+}
+/* 共通ここまで */
+
+
+/* layout */
+.header {
+    color: black;
+    margin-bottom: 10px;
+    border-bottom:outset thin black;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-style: italic;
+}
+.header h4 {
+    margin-bottom: 0px;
+    margin-left: 10px;
+}
+.header p {
+    padding: 0px;
+    margin-bottom: 0px;
+    margin-left: 10px;
+}
+.menu-bar {
+    background-color: steelblue;
+    padding: 10px;
+    margin: 20px 0px 20px 0px;
+}
+.menu-bar a {
+    color: white;
+    padding: auto;
+    text-align: center;
+    margin-left: 5vw;
+}
+/* layoutここまで */
+
+/* home */
+@keyframes hide {
+    0% {
+        opacity: 0;
+        height: 100%;
+        line-height: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    33% {
+        opacity: 1;
+        height: 100%;
+        line-height: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    80% {
+        opacity: 0;
+        height: 100%;
+        line-height: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    100% {
+        opacity: 0;
+        height: 0px;
+        line-height: 0px;
+        padding: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+}
+.messages {
+    animation-name: hide;
+    animation-duration: 5s;
+    animation-fill-mode: forwards;
+    border-radius: 5px;
+    padding: auto;
+}
+.messages-success {
+    background-color: skyblue;
+}
+.messages-fail {
+    background-color: pink;
+}
 .calendar-display {
     margin: 2px;
 }
 .table-display {
     margin: 2px;
 }
+/* homeここまで */
+
+/* specification */
+.condition {
+    border:solid thin black;
+    border-radius: 3px;
+    padding: 2px;
+    width: 100px;
+    background-color: gray;
+}
+.caption {
+    margin-bottom: 0px;
+    font-weight:bold;
+}
+/* specification ここまで */

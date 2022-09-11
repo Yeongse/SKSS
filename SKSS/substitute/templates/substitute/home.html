@@ -1,36 +1,33 @@
 {% extends 'substitute/layout.html' %}
 
 {% block head %}
-<script>
-    document.addEventListener('DOMContentLoaded', function(){
-        const calendarVisualizer = document.getElementById("calandar-visualizer");
-        const tableVisualizer = document.getElementById("table-visualizer");
-        const calendarDisplay = document.getElementById("calendar-display");
-        const tableDisplay = document.getElementById("table-display");
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            const calendarVisualizer = document.getElementById("calandar-visualizer");
+            const tableVisualizer = document.getElementById("table-visualizer");
+            const calendarDisplay = document.getElementById("calendar-display");
+            const tableDisplay = document.getElementById("table-display");
 
-        console.log(calendarDisplay.clientHeight);
-        tableDisplay.style.height = calendarDisplay.clientHeight + 'px';
+            tableDisplay.style.height = calendarDisplay.clientHeight + 'px';
 
-        calendarVisualizer.onclick = function(){
-            calendarDisplay.style.display = "block";
-            tableDisplay.style.display = "none";
-            calendarVisualizer.style.backgroundColor = "#808080";
-            tableVisualizer.style.backgroundColor = "#ffffff";
-        };
-        tableVisualizer.onclick = function(){
-            calendarDisplay.style.display = "none";
-            tableDisplay.style.display = "block";
-            calendarVisualizer.style.backgroundColor = "#ffffff";
-            tableVisualizer.style.backgroundColor = "#808080";
-        };
-        
-    })
-</script>
+            calendarVisualizer.onclick = function(){
+                calendarDisplay.style.display = "block";
+                tableDisplay.style.display = "none";
+                calendarVisualizer.style.backgroundColor = "#808080";
+                tableVisualizer.style.backgroundColor = "#ffffff";
+            };
+            tableVisualizer.onclick = function(){
+                calendarDisplay.style.display = "none";
+                tableDisplay.style.display = "block";
+                calendarVisualizer.style.backgroundColor = "#ffffff";
+                tableVisualizer.style.backgroundColor = "#808080";
+            };
+            
+        })
+    </script>
 {% endblock head %}
 
 {% block body %}
-    <h1 class="theme">ホーム画面</h1>
-
     {% if messages %}
         <div class="messages messages-success" style="list-style: none;">
             {% for message in messages %}
@@ -48,7 +45,7 @@
         {{ calendar_data.month_current | date:"Y年m月" }}
         <a href="{% url 'substitute:home' calendar_data.month_next.year calendar_data.month_next.month %}">次の月</a>
 
-        <table class="table table-bordered table-sm table-striped">
+        <table class="table table-bordered border-secondary table-sm table-striped">
             {% comment %} 曜日が一番上にヘッダーとして並ぶ {% endcomment %}
             <thead>
                 <tr>
@@ -69,7 +66,7 @@
                             <td>
                         {% endif %}
                                 {% comment %} その日の日付とそこに含まれる業務を箇条書きでカレンダーに1マスずつ格納していく {% endcomment %}
-                                <ul style="list-style: none;">
+                                <ul>
                                     <li>
                                     {% comment %} 前後の月が含まれる場合は何月かも書く {% endcomment %}
                                     {% if calendar_data.month_current.month != day_days_asks.day.month %}
@@ -103,7 +100,7 @@
     </div>
 
     <div id="table-display" style="display:none; overflow: scroll;">
-        <table class="table table-bordered table-sm table-striped">
+        <table class="table table-bordered border-secondary table-sm table-striped">
             <thead>
                 <tr>
                     <td>募集状況</td>

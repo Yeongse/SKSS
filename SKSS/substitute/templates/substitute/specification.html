@@ -1,0 +1,121 @@
+{% extends 'substitute/layout.html' %}
+
+{% block head %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            const conditions = JSON.parse('{{ conditions|safe }}');
+            conditions.forEach(condition => {
+                element = document.getElementById(condition);
+                element.style.backgroundColor = "#fd7e00";
+            });
+        })
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="table-wrapper">
+        <p class="caption">代行依頼の詳細</p>
+        <table class="table table-bordered border-secondary table-sm table-striped">
+            <thead>
+                <tr>
+                    <td>項目</td>
+                    <td>内容</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>日付</td>
+                    <td>{{ ask.date }}</td>
+                </tr>
+                <tr>
+                    <td>依頼者</td>
+                    <td>{{ ask.client.name }}</td>
+                </tr>
+                <tr>
+                    <td>担当講座</td>
+                    <td>
+                        <ul style="list-style: none;">
+                        {% for course in assumed_courses %}
+                            <li>{{ course.name }}</li>
+                        {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>特筆事項</td>
+                    <td>{{ ask.extra }}</td>
+                </tr>
+                <tr>
+                    <td>応募条件</td>
+                    <td>
+                        <ul>
+                            <li><p class="condition" id="K1, 2担当">K1, 2担当</p></li>
+                            <li><p class="condition" id="K3担当">K3担当</p></li>
+                            <li><p class="condition" id="理系">理系</p></li>
+                            <li><p class="condition" id="文系">文系</p></li>
+                            <li><p class="condition" id="医系">医系</p></li>
+                            <li><p class="condition" id="1, 2回生">1, 2回生</p></li>
+                            <li><p class="condition" id="3回生以上">3回生以上</p></li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+
+    <div>
+        <p class="caption">現在の申込者</p>
+        <table class="table table-bordered border-secondary table-sm table-striped">
+            <thead>
+                <tr>
+                    <td>応募日時</td>
+                    <td>応募者名</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                    <tr>
+                        <td>{{ entry.date }}</td>
+                        <td>{{ entry.cl.name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% for entry in entries %}
+        {% empty %}
+            <p>申込者はいません</p>
+        {% endfor %}
+    </div>
+
+    {% if ask.client == cl %}
+        <a href="{% url 'substitute:revise' ask.id %}" class="btn btn-primary">業務を修正する</a>
+
+    {% else %}
+        {% if not is_qualified %}
+            <p>あなたには応募資格がありません。</p>
+            <script>
+                document.addEventListener('DOMContentLoaded', function(){
+                    button = document.getElementById("entry");
+                    button.disabled = true;
+                })
+            </script>    
+        {% endif %}
+        {% if is_entry %}
+            <p>あなたは既に応募済みです</p>
+            <script>
+                document.addEventListener('DOMContentLoaded', function(){
+                    button = document.getElementById("entry");
+                    button.disabled = true;
+                })
+            </script>  
+        {% endif %}
+        <form action="{% url 'substitute:specification' ask.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="この代行依頼に応募する" id="entry">
+        </form>
+        
+    {% endif %}
+
+    <a href="{% url 'substitute:home' Now.year Now.month %}" class="btn btn-primary">ホームに戻る</a>
+{% endblock %}

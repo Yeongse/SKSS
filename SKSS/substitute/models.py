@@ -2,6 +2,11 @@ from django.db import models
 from django.core.validators import MinLengthValidator
 
 # Create your models here.
+class Condition(models.Model):
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.name
 
 class Course(models.Model):
     day = models.CharField(max_length=64)
@@ -19,16 +24,11 @@ class ClassLeader(models.Model):
     name = models.CharField(max_length=64)
     email = models.CharField(max_length=64)
     grade = models.CharField(max_length=64)
-    courses = models.ManyToManyField(Course, blank=True, related_name='Cls')
+    qualifications = models.ManyToManyField(Condition, related_name='cls')
+    courses = models.ManyToManyField(Course, related_name='cls')
 
     def __str__(self):
         return f'{self.grade}: {self.name}'
-
-class Condition(models.Model):
-    name = models.CharField(max_length=64)
-
-    def __str__(self):
-        return self.name
 
 class SubstituteAsk(models.Model):
     date = models.DateField()
@@ -43,7 +43,7 @@ class SubstituteAsk(models.Model):
 class Entry(models.Model):
     date = models.DateField()
     state = models.CharField(max_length=64)
-    CL = models.ForeignKey(to=ClassLeader, related_name='entries', on_delete=models.CASCADE)
+    cl = models.ForeignKey(to=ClassLeader, related_name='entries', on_delete=models.CASCADE)
     ask = models.ForeignKey(to=SubstituteAsk, related_name='entries', on_delete=models.CASCADE)
 
     def __str__(self):

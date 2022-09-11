@@ -1,8 +1,18 @@
 {% extends 'substitute/layout.html' %}
 {% load crispy_forms_tags %}
 
+{% block head %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            menu = document.querySelector(".menu-bar");
+            console.log(menu);
+            menu.remove();
+        });
+    </script>
+{% endblock head %}
+
 {% block body %}
-    <h1 class='theme'>ログイン画面</h1>
+    <h3 class='theme'>ログイン画面</h3>
 
     {% if messages %}
         <div class="messages messages-fail" style="list-style: none;">

@@ -13,8 +13,21 @@
         {% block head %}
         {% endblock  %}
     </head>
+    
     <body>
-        <h3 class="header">SKSS 駿台神戸校CL代行依頼システム(Sundai Kobe Substitute System)</h3>
+        <div class="header">
+            <h4 class>SKSS</h4>
+            <p><small>〜駿台神戸校CL代行依頼システム(Sundai Kobe Substitute System)〜</small></p>
+        </div>
+
+        <div class="menu-bar">
+            <a href="{% url 'substitute:home' Now.year Now.month %}">代行依頼の一覧</a>
+            <a href="{% url 'substitute:make' %}">代行依頼の作成</a>
+            <a href="{% url 'substitute:confirmAsk' %}">依頼した代行の確認</a>
+            <a href="{% url 'substitute:confirmEntry' %}">応募した代行の確認</a>
+            <a href="{% url 'substitute:logout' %}">ログアウトする</a>
+        </div>
+        
         <div class="content">
             {% block body %}
             {% endblock %}
