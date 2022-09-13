@@ -33,7 +33,6 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 # Application definition
 
 INSTALLED_APPS = [
-    'substitute', 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+    'bootstrap_datepicker_plus', 
+    'bootstrap4', 
+    'substitute', 
 ]
 
 MIDDLEWARE = [
@@ -54,6 +56,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'skss.urls'
+
+
+BOOTSTRAP4 = {
+    'include_jquery': True,
+}
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -70,10 +77,12 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'substitute.context_processor.constant_value'
             ],
+            'builtins':[ 
+                'bootstrap4.templatetags.bootstrap4',
+            ],
         },
     },
 ]
-
 
 
 WSGI_APPLICATION = 'skss.wsgi.application'

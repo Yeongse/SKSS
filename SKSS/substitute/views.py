@@ -1,3 +1,4 @@
+from ast import Sub
 from pickletools import read_uint1
 from django.shortcuts import render
 from django.urls import reverse
@@ -13,7 +14,7 @@ import json
 
 # Create your views here.
 from .models import Course, ClassLeader, Condition, SubstituteAsk, Entry
-from .forms import LoginForm, InitializeForm
+from .forms import LoginForm, InitializeForm, MakeForm
 
 import datetime
 now = datetime.datetime.now()
@@ -147,13 +148,28 @@ def specification(request, ask_id):
     ask = SubstituteAsk.objects.get(id=ask_id)
 
     if request.method == 'POST':
-        entry = Entry(
+        # 応募が送信された場合の処理
+        if 'entrant' in request.POST.dict().keys():
+            entry = Entry(
             date=now,
             state='応募中', 
             cl=cl, 
             ask=ask)
-        entry.save()
-        messages.success(request, f'応募が完了しました')
+            entry.save()
+            messages.success(request, f'応募が完了しました')
+        # 依頼が確定された場合の処理
+        else:
+            accepted_entry = Entry.objects.get(id=request.POST['contractor'])
+            ask.contractor = accepted_entry.cl
+            ask.save()
+            
+            entries = ask.entries.all()
+            for entry in entries:
+                entry.state = '落選'
+                entry.save()
+            accepted_entry.state = ('当選')
+            accepted_entry.save()
+        
         return HttpResponseRedirect(reverse('substitute:home', args=[now.year, now.month]))
     
     ask_day = japanese_days[ask.date.weekday()]
@@ -180,19 +196,43 @@ def specification(request, ask_id):
 
 @login_checker
 def revise(request, ask_id):
-    return 0
+    return render(request, 'substitute/revise.html', {
+        
+    })
 
 @login_checker
 def make(request):
-    return 0
+    cl = ClassLeader.objects.get(id=request.session['cl_id'])
+
+    if request.method == 'POST':
+        form = MakeForm(request.POST)
+        if form.is_valid():
+            ask = SubstituteAsk(
+                date=form.cleaned_data['date'], 
+                client=cl, 
+                contractor=None, 
+                extra=form.cleaned_data['extra']
+            )
+            ask.save()
+            for condition in form.cleaned_data['conditions']:
+                ask.conditions.add(condition)
+            messages.success(request, f'代行依頼が作成されました')
+            return HttpResponseRedirect(reverse('substitute:home', args=[now.year, now.month]))
+    return render(request, 'substitute/make.html', {
+        'form': MakeForm()
+    })
 
 @login_checker
 def confirmAsk(request):
-    return 0
+    return render(request, 'substitute/confirmAsk.html', {
+        
+    })
 
 @login_checker
 def confirmEntry(request):
-    return 0
+    return render(request, 'substitute/confirmEntry.html', {
+        
+    })
 
 @login_checker
 def logout(request):

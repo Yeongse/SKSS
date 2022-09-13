@@ -3,6 +3,13 @@
 {% block head %}
     <script>
         document.addEventListener('DOMContentLoaded', function(){
+            const activeLink = document.getElementById("for-home");
+            console.log(activeLink.firstElementChild);
+            activeLink.firstElementChild.style.textDecorationLine = "underline";
+            activeLink.firstElementChild.style.textDecorationThickness = "2.5px";
+            activeLink.style.fontWeight = "bold";
+
+            //カレンダー/テーブル表示の切り替え
             const calendarVisualizer = document.getElementById("calandar-visualizer");
             const tableVisualizer = document.getElementById("table-visualizer");
             const calendarDisplay = document.getElementById("calendar-display");
@@ -25,7 +32,7 @@
             
         })
     </script>
-{% endblock head %}
+{% endblock %}
 
 {% block body %}
     {% if messages %}
@@ -45,7 +52,7 @@
         {{ calendar_data.month_current | date:"Y年m月" }}
         <a href="{% url 'substitute:home' calendar_data.month_next.year calendar_data.month_next.month %}">次の月</a>
 
-        <table class="table table-bordered border-secondary table-sm table-striped">
+        <table class="my-calendar my-table table table-bordered border-secondary table-sm table-striped">
             {% comment %} 曜日が一番上にヘッダーとして並ぶ {% endcomment %}
             <thead>
                 <tr>
@@ -100,7 +107,7 @@
     </div>
 
     <div id="table-display" style="display:none; overflow: scroll;">
-        <table class="table table-bordered border-secondary table-sm table-striped">
+        <table class="my-table table table-bordered border-secondary table-sm table-striped">
             <thead>
                 <tr>
                     <td>募集状況</td>
@@ -113,7 +120,7 @@
                 <tr>
                     <td>{% if ask.contractor == null %} &#9675; {% else %} X {% endif %}</td>
                     <td>{{ ask.date }}</td>
-                    <td>{{ ask.client }}</td>
+                    <td><a href="{% url 'substitute:specification' ask.id %}">{{ ask.client }}</a></td>
                 </tr>
                 {% empty %}
                 <tr>
@@ -126,9 +133,4 @@
         </table>
     </div>
     <p class="complement">&#9675;: 募集中, X: 締切</p>
-
-    <a href="{% url 'substitute:make' %}" class="btn btn-primary">新しい代行依頼を作成する</a>
-    <a href="{% url 'substitute:confirmAsk' %}" class="btn btn-primary">出した代行依頼を確認する</a>
-    <a href="{% url 'substitute:confirmEntry' %}" class="btn btn-primary">応募した代行依頼を確認する</a>
-    <a href="{% url 'substitute:logout' %}" class="btn btn-primary">ログアウトする</a>
 {% endblock %}

@@ -11,15 +11,15 @@
         })
     </script>
 {% endblock %}
-
+    
 {% block body %}
     <div class="table-wrapper">
         <p class="caption">代行依頼の詳細</p>
         <table class="table table-bordered border-secondary table-sm table-striped">
             <thead>
                 <tr>
-                    <td>項目</td>
-                    <td>内容</td>
+                    <th>項目</th>
+                    <th>内容</th>
                 </tr>
             </thead>
             <tbody>
@@ -66,11 +66,12 @@
 
     <div>
         <p class="caption">現在の申込者</p>
-        <table class="table table-bordered border-secondary table-sm table-striped">
+        <table class="my-table table table-bordered border-secondary table-sm table-striped">
             <thead>
                 <tr>
-                    <td>応募日時</td>
-                    <td>応募者名</td>
+                    <th>応募日時</th>
+                    <th>応募者名</th>
+                    <th>応募状況</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,6 +79,21 @@
                     <tr>
                         <td>{{ entry.date }}</td>
                         <td>{{ entry.cl.name }}</td>
+                        <td>
+                            {% if ask.client == cl %}
+                                {% if ask.contractor == null %}
+                                    <form action="{% url 'substitute:specification' ask.id %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="contractor" value="{{ entry.id }}">
+                                        <input type="submit" value="このCLに依頼する" id="contract">
+                                    </form>
+                                {% else %}
+                                    {{ entry.state }}
+                                {% endif %}
+                            {% else %}
+                                {{ entry.state }}
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -112,6 +128,7 @@
         {% endif %}
         <form action="{% url 'substitute:specification' ask.id %}" method="post">
             {% csrf_token %}
+            <input type="hidden" name="entrant" value="{{ cl.id }}">
             <input type="submit" value="この代行依頼に応募する" id="entry">
         </form>
         

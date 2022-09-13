@@ -1,11 +1,9 @@
 {% extends 'substitute/layout.html' %}
-{% load crispy_forms_tags %}
 
 {% block head %}
-    {{ form.media }}    
     <script>
         document.addEventListener('DOMContentLoaded', function(){
-            const activeLink = document.getElementById("for-make");
+            const activeLink = document.getElementById("for-confirmEntry");
             console.log(activeLink.firstElementChild);
             activeLink.firstElementChild.style.textDecorationLine = "underline";
             activeLink.firstElementChild.style.textDecorationThickness = "2.5px";
@@ -16,9 +14,4 @@
 
 {% block body %}
 
-    <form action="{% url 'substitute:make' %}" method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <input type="submit">
-    </form>
 {% endblock %}

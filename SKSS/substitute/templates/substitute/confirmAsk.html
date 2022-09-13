@@ -1,0 +1,16 @@
+{% extends 'substitute/layout.html' %}
+
+{% block head %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            const activeLink = document.getElementById("for-confirmAsk");
+            console.log(activeLink.firstElementChild);
+            activeLink.firstElementChild.style.textDecorationLine = "underline";
+            activeLink.firstElementChild.style.textDecorationThickness = "2.5px";
+            activeLink.style.fontWeight = "bold";
+        })
+    </script>
+{% endblock %}
+
+{% block body %}
+{% endblock %}
