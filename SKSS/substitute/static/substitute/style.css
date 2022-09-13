@@ -132,9 +132,11 @@ ul li {
 
 /* specification */
 .condition {
+    text-align: center;
     border:solid thin black;
     border-radius: 3px;
     padding: 2px;
+    margin: 10px 15px 10px 0px;
     width: 100px;
     background-color: gray;
 }
@@ -154,9 +156,9 @@ ul li {
     color: #00f;
 }
 .datepicker {
-    margin-left: 5vw;
+    margin-left: 3.7vw;
 }
 .picker-switch {
-    margin-left: 5vw;
+    margin-left: 3.7vw;
 }
 /* make ここまで */
