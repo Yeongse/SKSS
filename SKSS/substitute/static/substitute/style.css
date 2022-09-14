@@ -155,10 +155,8 @@ ul li {
 .datepicker-days td:last-child {
     color: #00f;
 }
-.datepicker {
-    margin-left: 3.7vw;
-}
-.picker-switch {
+/* 3.7は目分量で感覚的に出した */
+.datepicker, .picker-switch {
     margin-left: 3.7vw;
 }
 /* make ここまで */
