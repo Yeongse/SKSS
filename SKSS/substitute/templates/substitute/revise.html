@@ -1,5 +1,61 @@
 {% extends 'substitute/layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    {{ form.media }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            const conditions = JSON.parse('{{ conditions|safe }}');
+            conditions.forEach(condition => {
+                element = document.getElementById(condition);
+                element.style.backgroundColor = "#fd7e00";
+            });
+        })
+    </script>
+{% endblock %}
 
 {% block body %}
+    <h3 class="sub-theme">代行依頼の修正画面</h3>
+    <p class="caption">修正前</p>
+    <table class="my-table table table-bordered border-secondary table-sm table-striped">
+        <thead>
+            <tr>
+                <th>項目</th>
+                <th>内容</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>日付</td>
+                <td>{{ ask_past.date }}</td>
+            </tr>
+            <tr>
+                <td>特筆事項</td>
+                <td>{{ ask_past.extra }}</td>
+            </tr>
+            <tr>
+                <td>応募条件</td>
+                <td>
+                    <ul style="display: flex;">
+                        <li><p class="condition" id="K1, 2担当">K1, 2担当</p></li>
+                        <li><p class="condition" id="K3担当">K3担当</p></li>
+                        <li><p class="condition" id="理系">理系</p></li>
+                        <li><p class="condition" id="文系">文系</p></li>
+                        <li><p class="condition" id="医系">医系</p></li>
+                        <li><p class="condition" id="1, 2回生">1, 2回生</p></li>
+                        <li><p class="condition" id="3回生以上">3回生以上</p></li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
+    <hr>
+
+    <p class="caption">修正後</p>
+    <form action="{% url 'substitute:revise' ask_past.id %}" method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit">
+    </form>
 {% endblock %}

@@ -14,7 +14,7 @@ import json
 
 # Create your views here.
 from .models import Course, ClassLeader, Condition, SubstituteAsk, Entry
-from .forms import LoginForm, InitializeForm, MakeForm
+from .forms import LoginForm, InitializeForm, MakeForm, ReviseForm
 
 import datetime
 now = datetime.datetime.now()
@@ -196,8 +196,30 @@ def specification(request, ask_id):
 
 @login_checker
 def revise(request, ask_id):
+    ask_past = SubstituteAsk.objects.get(id=ask_id)
+
+    if request.method == 'POST':
+        form = ReviseForm(request.POST)
+        if form.is_valid():
+            ask_past.date = form.cleaned_data['date']
+            ask_past.extra = form.cleaned_data['extra']
+            ask_past.conditions.clear()
+            for condition in form.cleaned_data['conditions']:
+                ask_past.conditions.add(condition)
+            ask_past.save()
+            messages.success(request, f'代行依頼が修正されました')
+            return HttpResponseRedirect(reverse('substitute:home', args=[now.year, now.month]))
+
+    initial_value = {
+        'date': ask_past.date, 
+        'extra': ask_past.extra, 
+        'conditions': ask_past.conditions.all()
+    }
+    conditions = [condition.name for condition in initial_value['conditions']]
     return render(request, 'substitute/revise.html', {
-        
+        'ask_past': ask_past, 
+        'form': ReviseForm(initial=initial_value), 
+        'conditions': json.dumps(conditions)
     })
 
 @login_checker

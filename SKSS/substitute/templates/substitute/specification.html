@@ -104,8 +104,10 @@
         {% endfor %}
     </div>
 
+    <hr>
+
     {% if ask.client == cl %}
-        <a href="{% url 'substitute:revise' ask.id %}" class="btn btn-primary">業務を修正する</a>
+        <a href="{% url 'substitute:revise' ask.id %}" class="btn btn-primary">代行依頼を修正する</a>
 
     {% else %}
         {% if not is_qualified %}

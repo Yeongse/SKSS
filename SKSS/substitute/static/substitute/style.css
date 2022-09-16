@@ -8,15 +8,15 @@ a {
 a:hover {
     opacity: 0.6;
 }
-/* thead {
-    background-color: navajowhite;
-} */
 ul {
     list-style: none;
 }
 ul li {
     position: relative;
-    left: -30px;
+    left: -40px;
+}
+hr {
+    border: solid 1.5px gray;
 }
 .content {
     width: 90vw;
@@ -27,6 +27,11 @@ ul li {
 }
 .my-table th {
     background-color: wheat;
+}
+.sub-theme {
+    text-align: center;
+    color: white;
+    background-color: royalblue;
 }
 /* 共通ここまで */
 
@@ -142,11 +147,11 @@ ul li {
 }
 .caption {
     margin-bottom: 0px;
-    font-weight:bold;
+    font-weight: bold;
 }
 /* specification ここまで */
 
-/* make */
+/* make, revise */
 .datepicker-days th.dow:first-child,
 .datepicker-days td:first-child {
     color: #f00;
@@ -155,8 +160,7 @@ ul li {
 .datepicker-days td:last-child {
     color: #00f;
 }
-/* 3.7は目分量で感覚的に出した */
 .datepicker, .picker-switch {
-    margin-left: 3.7vw;
+    margin-left: 4vw;
 }
-/* make ここまで */
+/* make, revise ここまで */

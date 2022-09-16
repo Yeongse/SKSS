@@ -15,3 +15,8 @@ class MakeForm(forms.Form):
     date = forms.DateField(label='代行日時', widget=DatePickerInput(format='%Y-%m-%d', options={'locale': 'ja', 'dayViewHeaderFormat': 'YYYY年 MMMM',}))
     extra = forms.CharField(label='特筆事項', required=False, widget=forms.Textarea())
     conditions = forms.ModelMultipleChoiceField(label='応募条件', required=False, widget=forms.CheckboxSelectMultiple, queryset=Condition.objects.all())
+
+class ReviseForm(forms.Form):
+    date = forms.DateField(label='代行日時', widget=DatePickerInput(format='%Y-%m-%d', options={'locale': 'ja', 'dayViewHeaderFormat': 'YYYY年 MMMM',}))
+    extra = forms.CharField(label='特筆事項', required=False, widget=forms.Textarea())
+    conditions = forms.ModelMultipleChoiceField(label='応募条件', required=False, widget=forms.CheckboxSelectMultiple, queryset=Condition.objects.all())

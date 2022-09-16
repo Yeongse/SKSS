@@ -15,7 +15,6 @@
 {% endblock %}
 
 {% block body %}
-
     <form action="{% url 'substitute:make' %}" method="post">
         {% csrf_token %}
         {{ form|crispy }}
