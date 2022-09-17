@@ -1,5 +1,6 @@
 from ast import Sub
 from pickletools import read_uint1
+from tkinter.messagebox import askyesno
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
@@ -246,8 +247,12 @@ def make(request):
 
 @login_checker
 def confirmAsk(request):
+    cl = request.session['cl_id']
+    asks = SubstituteAsk.objects.filter(client=cl).order_by('date')
+    entry_nums = [len(ask.entries.all()) for ask in asks]
+    asks_and_entry_nums = [{'ask': ask, 'entry_num': entry_num} for (ask, entry_num) in zip(asks, entry_nums)]
     return render(request, 'substitute/confirmAsk.html', {
-        
+        'asks_and_entry_nums': asks_and_entry_nums
     })
 
 @login_checker
