@@ -13,5 +13,37 @@
 {% endblock %}
 
 {% block body %}
-
+    <table class="my-table table table-bordered border-secondary table-sm table-striped">
+        <thead>
+            <tr>
+                <th>代行日時</th>
+                <th>依頼者</th>
+                <th>応募日時</th>
+                <th>応募状況</th>
+                <th>詳細</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.ask.date }}</td>
+                    <td>{{ entry.ask.client }}</td>
+                    <td>{{ entry.date }}</td>
+                    <td>{{ entry.state }}</td>
+                    <td><a href="{% url 'substitute:specification' entry.ask.id %}">詳細を見る</a></td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% for entry in entries %}
+    {% empty %}
+        <p>あなたが応募した代行はありません</p>
+    {% endfor %}
 {% endblock %}

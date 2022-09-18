@@ -47,4 +47,4 @@ class Entry(models.Model):
     ask = models.ForeignKey(to=SubstituteAsk, related_name='entries', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.date}: {self.CL}'
+        return f'{self.date}: {self.cl}'

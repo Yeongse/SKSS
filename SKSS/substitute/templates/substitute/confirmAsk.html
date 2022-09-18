@@ -41,4 +41,8 @@
             {% endfor %}
         </tbody>
     </table>
+    {% for ask_and_entry_num in asks_and_entry_nums %}
+    {% empty %}
+        <p>あなたが依頼した代行はありません</p>
+    {% endfor %}
 {% endblock %}

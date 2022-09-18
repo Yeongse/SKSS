@@ -247,8 +247,8 @@ def make(request):
 
 @login_checker
 def confirmAsk(request):
-    cl = request.session['cl_id']
-    asks = SubstituteAsk.objects.filter(client=cl).order_by('date')
+    cl = ClassLeader.objects.get(id=request.session['cl_id'])
+    asks = SubstituteAsk.objects.filter(client=cl).order_by('date').reverse()
     entry_nums = [len(ask.entries.all()) for ask in asks]
     asks_and_entry_nums = [{'ask': ask, 'entry_num': entry_num} for (ask, entry_num) in zip(asks, entry_nums)]
     return render(request, 'substitute/confirmAsk.html', {
@@ -257,8 +257,10 @@ def confirmAsk(request):
 
 @login_checker
 def confirmEntry(request):
+    cl = ClassLeader.objects.get(id=request.session['cl_id'])
+    entries = Entry.objects.filter(cl=cl).order_by('ask').reverse()
     return render(request, 'substitute/confirmEntry.html', {
-        
+        'entries': entries
     })
 
 @login_checker
