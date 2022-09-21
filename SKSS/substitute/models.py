@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MinLengthValidator
 
+japanese_days = ['月', '火', '水', '木', '金', '土', '日']
+
 # Create your models here.
 class Condition(models.Model):
     name = models.CharField(max_length=64)

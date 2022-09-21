@@ -25,7 +25,7 @@
             <tbody>
                 <tr>
                     <td>日付</td>
-                    <td>{{ ask.date }}</td>
+                    <td>{{ ask.date }} ({{ day }})</td>
                 </tr>
                 <tr>
                     <td>依頼者</td>
@@ -65,7 +65,7 @@
     
     <hr>
 
-    <div>
+    <div class="table-wrapper">
         <p class="caption">現在の申込者</p>
         <table class="my-table table table-bordered border-secondary table-sm table-striped">
             <thead>
@@ -83,10 +83,10 @@
                         <td>
                             {% if ask.client == cl %}
                                 {% if ask.contractor == null %}
-                                    <form action="{% url 'substitute:specification' ask.id %}" method="post">
+                                    <form action="{% url 'substitute:specification' ask.id %}" method="post" class="need_check">
                                         {% csrf_token %}
                                         <input type="hidden" name="contractor" value="{{ entry.id }}">
-                                        <input type="submit" value="このCLに依頼する" id="contract">
+                                        <input type="submit" value="このCLに依頼する" id="contract" class="btn btn-primary" style="margin: 3px;">
                                     </form>
                                 {% else %}
                                     {{ entry.state }}
@@ -129,13 +129,11 @@
                 })
             </script>  
         {% endif %}
-        <form action="{% url 'substitute:specification' ask.id %}" method="post">
+        <form action="{% url 'substitute:specification' ask.id %}" method="post" class="need_check">
             {% csrf_token %}
             <input type="hidden" name="entrant" value="{{ cl.id }}">
             <input type="submit" value="この代行依頼に応募する" id="entry">
         </form>
-        
     {% endif %}
 
-    <a href="{% url 'substitute:home' Now.year Now.month %}" class="btn btn-primary">ホームに戻る</a>
 {% endblock %}

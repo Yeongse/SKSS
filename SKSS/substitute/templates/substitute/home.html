@@ -46,6 +46,8 @@
     <p class="btn" id="calandar-visualizer" style="background-color: #808080;"><small>カレンダー</small></p>
     <p class="btn" id="table-visualizer"><small>テーブル</small></p>
 
+    <hr>
+
     <div id="calendar-display">
         {% comment %} 前後の月への遷移 {% endcomment %}
         <a href="{% url 'substitute:home' calendar_data.month_previous.year calendar_data.month_previous.month %}">前の月</a>
@@ -107,30 +109,31 @@
     </div>
 
     <div id="table-display" style="display:none; overflow: scroll;">
+        <a href="{% url 'substitute:past' %}">過去の代行依頼を見る</a>
         <table class="my-table table table-bordered border-secondary table-sm table-striped">
             <thead>
                 <tr>
                     <th>募集状況</th>
                     <th>代行日時</th>
                     <th>代行依頼者</th>
+                    <th>詳細</th>
                 </tr>
             </thead>
             <tbody>
-                {% for ask in asks_after_now %}
+                {% for ask_value in ask_values_after_now %}
                     <tr>
-                        <td>{% if ask.contractor == null %} &#9675; {% else %} X {% endif %}</td>
-                        <td>{{ ask.date }}</td>
-                        <td><a href="{% url 'substitute:specification' ask.id %}">{{ ask.client }}</a></td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{% if ask_value.ask.contractor == null %} &#9675; {% else %} X {% endif %}</td>
+                        <td>{{ ask_value.ask.date }} ({{ ask_value.day }})</td>
+                        <td>{{ ask_value.ask.client }}</td>
+                        <td><a href="{% url 'substitute:specification' ask_value.ask.id %}">詳細を見る</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+        {% for ask_value in ask_values_after_now %}
+        {% empty %}
+            <p>日時が今日以降の代行依頼はありません</p>
+        {% endfor %}
     </div>
     <p class="complement">&#9675;: 募集中, X: 締切</p>
 {% endblock %}

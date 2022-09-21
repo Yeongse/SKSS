@@ -1,0 +1,27 @@
+{% extends 'substitute/layout.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+    <div style="height: 350px; overflow: scroll;">
+        <table class="my-table table table-bordered border-secondary table-sm table-striped">
+            <thead>
+                <tr>
+                    <th>代行日時</th>
+                    <th>代行依頼者</th>
+                    <th>詳細</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ask_value in ask_values_past %}
+                    <tr>
+                        <td>{{ ask_value.ask.date }} ({{ ask_value.day }})</td>
+                        <td>{{ ask_value.ask.client }}</td>
+                        <td><a href="{% url 'substitute:specification' ask_value.ask.id %}">詳細を見る</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

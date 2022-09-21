@@ -23,25 +23,17 @@
             </tr>
         </thead>
         <tbody>
-            {% for ask_and_entry_num in asks_and_entry_nums %}
+            {% for ask_value in ask_values %}
             <tr>
-                <td>{% if ask_and_entry_num.ask.contractor == null %} 募集中 {% else %} 委託者確定済 {% endif %}</td>
-                <td>{{ ask_and_entry_num.entry_num }}</td>
-                <td>{{ ask_and_entry_num.ask.date }}</td>
-                <td><a href="{% url 'substitute:specification' ask_and_entry_num.ask.id %}">詳細を見る</a></td>
+                <td>{% if ask_value.ask.contractor == null %} 募集中 {% else %} 委託者確定済 {% endif %}</td>
+                <td>{{ ask_value.entry_num }}</td>
+                <td>{{ ask_value.ask.date }} ({{ ask_value.day }})</td>
+                <td><a href="{% url 'substitute:specification' ask_value.ask.id %}">詳細を見る</a></td>
             </tr>
-            {% empty %}
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <p>あなたが依頼した代行はありません</p>
             {% endfor %}
         </tbody>
     </table>
-    {% for ask_and_entry_num in asks_and_entry_nums %}
+    {% for ask_value in ask_values %}
     {% empty %}
         <p>あなたが依頼した代行はありません</p>
     {% endfor %}

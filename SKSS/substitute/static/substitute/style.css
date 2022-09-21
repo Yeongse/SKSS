@@ -23,7 +23,7 @@ hr {
     margin: auto;
 }
 .btn {
-    margin: 15px 15px 15px 0px;
+    margin: 5px 15px 5px 0px;
 }
 .my-table th {
     background-color: wheat;
@@ -126,6 +126,10 @@ hr {
 }
 .table-display {
     margin: 2px;
+}
+.complement {
+    text-align: right;
+    margin-top: 0px;
 }
 .my-calendar th:first-child {
     color: #f00;

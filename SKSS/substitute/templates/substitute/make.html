@@ -15,9 +15,10 @@
 {% endblock %}
 
 {% block body %}
-    <form action="{% url 'substitute:make' %}" method="post">
+    <form action="{% url 'substitute:make' %}" method="post" class-"need_check">
         {% csrf_token %}
         {{ form|crispy }}
-        <input type="submit">
+        <hr>
+        <input type="submit" class="btn btn-primary" style="margin: 3px;">
     </form>
 {% endblock %}

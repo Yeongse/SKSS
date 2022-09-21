@@ -53,7 +53,7 @@
     <hr>
 
     <p class="caption">修正後</p>
-    <form action="{% url 'substitute:revise' ask_past.id %}" method="post">
+    <form action="{% url 'substitute:revise' ask_past.id %}" method="post" class="need_check">
         {% csrf_token %}
         {{ form|crispy }}
         <input type="submit">

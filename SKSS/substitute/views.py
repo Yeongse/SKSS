@@ -135,12 +135,25 @@ def home(request, year, month):
     
     # テーブル表示に使う情報
     asks_after_now = SubstituteAsk.objects.filter(date__gte=now).order_by('date')
+    days_after_now = [japanese_days[ask_after_now.date.weekday()] for ask_after_now in asks_after_now]
+    ask_values_after_now = [{'ask': ask_after_now, 'day': day_after_now} for (ask_after_now, day_after_now) in zip(asks_after_now, days_after_now)]
 
     return render(request, 'substitute/home.html', {
         'cl': cl, 
         'calendar_data': calendar_data, 
         'month_days_asks': month_days_asks, 
-        'asks_after_now': asks_after_now
+        'ask_values_after_now': ask_values_after_now
+        })
+
+# 過去のものはデータ数がエグくなるから別ページに
+@login_checker
+def past(request):
+    asks_past = SubstituteAsk.objects.filter(date__lt=now).order_by('date').reverse()
+    days_past = [japanese_days[ask_past.date.weekday()] for ask_past in asks_past]
+    ask_values_past = [{'ask': ask_past, 'day': day_past} for (ask_past, day_past) in zip(asks_past, days_past)]
+
+    return render(request, 'substitute/past.html', {
+        'ask_values_past': ask_values_past
     })
 
 @login_checker
@@ -173,8 +186,8 @@ def specification(request, ask_id):
         
         return HttpResponseRedirect(reverse('substitute:home', args=[now.year, now.month]))
     
-    ask_day = japanese_days[ask.date.weekday()]
-    assumed_courses = ask.client.courses.filter(day=ask_day)
+    day = japanese_days[ask.date.weekday()]
+    assumed_courses = ask.client.courses.filter(day=day)
     
     conditions = ask.conditions.all()
     qualifications = cl.qualifications.all()
@@ -188,6 +201,7 @@ def specification(request, ask_id):
     return render(request, 'substitute/specification.html', {
         'cl': cl, 
         'ask': ask, 
+        'day':day, 
         'assumed_courses': assumed_courses, 
         'conditions': json.dumps(conditions), 
         'entries': entries, 
@@ -250,17 +264,20 @@ def confirmAsk(request):
     cl = ClassLeader.objects.get(id=request.session['cl_id'])
     asks = SubstituteAsk.objects.filter(client=cl).order_by('date').reverse()
     entry_nums = [len(ask.entries.all()) for ask in asks]
-    asks_and_entry_nums = [{'ask': ask, 'entry_num': entry_num} for (ask, entry_num) in zip(asks, entry_nums)]
+    days = [japanese_days[ask.date.weekday()] for ask in asks]
+    ask_values = [{'ask': ask, 'day': day, 'entry_num': entry_num} for (ask, day, entry_num) in zip(asks, days, entry_nums)]
     return render(request, 'substitute/confirmAsk.html', {
-        'asks_and_entry_nums': asks_and_entry_nums
+        'ask_values': ask_values
     })
 
 @login_checker
 def confirmEntry(request):
     cl = ClassLeader.objects.get(id=request.session['cl_id'])
-    entries = Entry.objects.filter(cl=cl).order_by('ask').reverse()
+    entries = Entry.objects.filter(cl=cl).order_by('ask__date').reverse()
+    ask_days = days = [japanese_days[entry.ask.date.weekday()] for entry in entries]
+    entry_values = [{'entry': entry, 'ask_day': ask_day} for (entry, ask_day) in zip(entries, ask_days)]
     return render(request, 'substitute/confirmEntry.html', {
-        'entries': entries
+        'entry_values': entry_values
     })
 
 @login_checker

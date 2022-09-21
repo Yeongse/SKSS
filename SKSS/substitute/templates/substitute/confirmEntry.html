@@ -24,25 +24,18 @@
             </tr>
         </thead>
         <tbody>
-            {% for entry in entries %}
+            {% for entry_value in entry_values %}
                 <tr>
-                    <td>{{ entry.ask.date }}</td>
-                    <td>{{ entry.ask.client }}</td>
-                    <td>{{ entry.date }}</td>
-                    <td>{{ entry.state }}</td>
-                    <td><a href="{% url 'substitute:specification' entry.ask.id %}">詳細を見る</a></td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ entry_value.entry.ask.date }} ({{ entry_value.ask_day }})</td>
+                    <td>{{ entry_value.entry.ask.client }}</td>
+                    <td>{{ entry_value.entry.date }}</td>
+                    <td>{{ entry_value.entry.state }}</td>
+                    <td><a href="{% url 'substitute:specification' entry_value.entry.ask.id %}">詳細を見る</a></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    {% for entry in entries %}
+    {% for entry_value in entry_values %}
     {% empty %}
         <p>あなたが応募した代行はありません</p>
     {% endfor %}
