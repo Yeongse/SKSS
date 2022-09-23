@@ -217,6 +217,7 @@ def revise(request, ask_id):
         form = ReviseForm(request.POST)
         if form.is_valid():
             ask_past.date = form.cleaned_data['date']
+            ask_past.reason = form.cleaned_data['reason']
             ask_past.extra = form.cleaned_data['extra']
             ask_past.conditions.clear()
             for condition in form.cleaned_data['conditions']:
@@ -227,6 +228,7 @@ def revise(request, ask_id):
 
     initial_value = {
         'date': ask_past.date, 
+        'reason': ask_past.reason, 
         'extra': ask_past.extra, 
         'conditions': ask_past.conditions.all()
     }
@@ -248,6 +250,7 @@ def make(request):
                 date=form.cleaned_data['date'], 
                 client=cl, 
                 contractor=None, 
+                reason=form.cleaned_data['reason'], 
                 extra=form.cleaned_data['extra']
             )
             ask.save()

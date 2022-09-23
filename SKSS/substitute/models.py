@@ -36,6 +36,7 @@ class SubstituteAsk(models.Model):
     date = models.DateField()
     client = models.ForeignKey(to=ClassLeader, related_name='ordered_asks', on_delete=models.CASCADE)
     contractor = models.ForeignKey(to=ClassLeader, related_name='contracted_asks', on_delete=models.CASCADE, blank=True, null=True)
+    reason = models.TextField()
     extra = models.TextField(blank=True, null=True)
     conditions = models.ManyToManyField(Condition, blank=True, related_name='asks')
     
