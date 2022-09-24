@@ -170,7 +170,48 @@ def specification(request, ask_id):
             cl=cl, 
             ask=ask)
             entry.save()
+
+            # 応募できた時の応募者への通知
+            mail_subject = '代行への応募完了の通知'
+            mail_context = {
+                'cl': cl, 
+                'ask': ask, 
+                'day': day, 
+                'assumed_courses': assumed_courses
+            }
+            mail_message_html = render_to_string('substitute/mails/entry_notice.html', mail_context, request)
+            mail_message = strip_tags(mail_message_html)
+            mail_bcc_list = [cl.email]
+            mail = EmailMessage(
+                subject=mail_subject, 
+                body=mail_message, 
+                from_email = settings.DEFAULT_FROM_EMAIL, 
+                to=[settings.DEFAULT_FROM_EMAIL], 
+                bcc=mail_bcc_list
+                )
+            mail.send()
+
+            # 新しい応募があった時の依頼者への通知
+            mail_subject = '新規応募の通知'
+            mail_context = {
+                'cl': cl, 
+                'ask': ask, 
+                'entry_num': len(ask.entries.all())
+            }
+            mail_message_html = render_to_string('substitute/mails/be_entried_notice.html', mail_context, request)
+            mail_message = strip_tags(mail_message_html)
+            mail_bcc_list = [ask.client.email]
+            mail = EmailMessage(
+                subject=mail_subject, 
+                body=mail_message, 
+                from_email = settings.DEFAULT_FROM_EMAIL, 
+                to=[settings.DEFAULT_FROM_EMAIL], 
+                bcc=mail_bcc_list
+                )
+            mail.send()
+
             messages.success(request, f'応募が完了しました')
+
         # 依頼が確定された場合の処理
         else:
             accepted_entry = Entry.objects.get(id=request.POST['contractor'])
@@ -183,6 +224,23 @@ def specification(request, ask_id):
                 entry.save()
             accepted_entry.state = ('当選')
             accepted_entry.save()
+
+            mail_subject = '出勤者確定の通知'
+            mail_context = {
+                'ask': ask, 
+                'day': day
+            }
+            mail_message_html = render_to_string('substitute/mails/contract_notice.html', mail_context, request)
+            mail_message = strip_tags(mail_message_html)
+            mail_bcc_list = [cl.email for cl in ClassLeader.objects.all()]
+            mail = EmailMessage(
+                subject=mail_subject, 
+                body=mail_message, 
+                from_email = settings.DEFAULT_FROM_EMAIL, 
+                to=[settings.DEFAULT_FROM_EMAIL], 
+                bcc=mail_bcc_list
+                )
+            mail.send() 
         
         return HttpResponseRedirect(reverse('substitute:home', args=[now.year, now.month]))
     
@@ -256,8 +314,31 @@ def make(request):
             ask.save()
             for condition in form.cleaned_data['conditions']:
                 ask.conditions.add(condition)
+
+            day = japanese_days[ask.date.weekday()]
+            assumed_courses = ask.client.courses.filter(day=day)
+            mail_subject = '新規代行依頼の通知'
+            mail_context = {
+                'ask': ask, 
+                'day': day, 
+                'assumed_courses': assumed_courses, 
+                'conditions': ask.conditions.all()
+            }
+            mail_message_html = render_to_string('substitute/mails/make_notice.html', mail_context, request)
+            mail_message = strip_tags(mail_message_html)
+            mail_bcc_list = [cl.email for cl in ClassLeader.objects.all()]
+            mail = EmailMessage(
+                subject=mail_subject, 
+                body=mail_message, 
+                from_email = settings.DEFAULT_FROM_EMAIL, 
+                to=[settings.DEFAULT_FROM_EMAIL], 
+                bcc=mail_bcc_list
+                )
+            mail.send() 
+        
             messages.success(request, f'代行依頼が作成されました')
             return HttpResponseRedirect(reverse('substitute:home', args=[now.year, now.month]))
+            
     return render(request, 'substitute/make.html', {
         'form': MakeForm()
     })

@@ -4,6 +4,12 @@ from django.core.validators import MinLengthValidator
 japanese_days = ['月', '火', '水', '木', '金', '土', '日']
 
 # Create your models here.
+class Grade(models.Model):
+    name = name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.name
+
 class Condition(models.Model):
     name = models.CharField(max_length=64)
 
@@ -12,7 +18,7 @@ class Condition(models.Model):
 
 class Course(models.Model):
     day = models.CharField(max_length=64)
-    grade = models.CharField(max_length=64)
+    grade = models.ForeignKey(to=Grade, on_delete=models.CASCADE)
     level = models.CharField(max_length=64)
     subject = models.CharField(max_length=64)
     name = models.CharField(max_length=64)
@@ -25,7 +31,7 @@ class ClassLeader(models.Model):
     password = models.CharField(validators=[MinLengthValidator(4)], max_length=128)
     name = models.CharField(max_length=64)
     email = models.CharField(max_length=64)
-    grade = models.CharField(max_length=64)
+    grade = models.ForeignKey(to=Grade, on_delete=models.CASCADE)
     qualifications = models.ManyToManyField(Condition, related_name='cls')
     courses = models.ManyToManyField(Course, related_name='cls')
 

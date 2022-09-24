@@ -1,0 +1,16 @@
+{% extends 'substitute/mails/layout.html' %}
+
+{% block body %}
+<p>{{ cl.name }}様</p>
+
+<p>この度は新たに代行依頼への申込ありがとうございました。</p>
+<p>以下の応募を確かに承りました。</p>
+
+<p>―――――――――――――――――――――――――――</p>
+<p>代行依頼者: {{ ask.client.name }}</p>
+<p>日付: {{ ask.date }} ({{ day }})</p>
+<p>担当講座: {% for course in assumed_courses %} {{course.name}} {% endfor %}</p>
+<p>―――――――――――――――――――――――――――</p>
+
+<p>依頼者の判断をお待ちください。</p>
+{% endblock %}
