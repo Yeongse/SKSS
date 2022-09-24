@@ -14,7 +14,7 @@ from django.db.models import Q
 import json
 
 # Create your views here.
-from .models import Course, ClassLeader, Condition, SubstituteAsk, Entry
+from .models import Grade, Day, Level, Subject, Condition, Course, ClassLeader, SubstituteAsk, Entry
 from .forms import LoginForm, InitializeForm, MakeForm, ReviseForm
 
 import datetime
@@ -135,37 +135,35 @@ def home(request, year, month):
     
     # テーブル表示に使う情報
     asks_after_now = SubstituteAsk.objects.filter(date__gte=now).order_by('date')
-    days_after_now = [japanese_days[ask_after_now.date.weekday()] for ask_after_now in asks_after_now]
-    ask_values_after_now = [{'ask': ask_after_now, 'day': day_after_now} for (ask_after_now, day_after_now) in zip(asks_after_now, days_after_now)]
 
     return render(request, 'substitute/home.html', {
         'cl': cl, 
         'calendar_data': calendar_data, 
         'month_days_asks': month_days_asks, 
-        'ask_values_after_now': ask_values_after_now
+        'asks_after_now': asks_after_now
         })
 
 # 過去のものはデータ数がエグくなるから別ページに
 @login_checker
 def past(request):
     asks_past = SubstituteAsk.objects.filter(date__lt=now).order_by('date').reverse()
-    days_past = [japanese_days[ask_past.date.weekday()] for ask_past in asks_past]
-    ask_values_past = [{'ask': ask_past, 'day': day_past} for (ask_past, day_past) in zip(asks_past, days_past)]
 
     return render(request, 'substitute/past.html', {
-        'ask_values_past': ask_values_past
+        'asks_past': asks_past
     })
 
 @login_checker
 def specification(request, ask_id):
     cl = ClassLeader.objects.get(id=request.session['cl_id'])
     ask = SubstituteAsk.objects.get(id=ask_id)
+    assumed_courses = ask.client.courses.filter(day=ask.day)
 
     if request.method == 'POST':
         # 応募が送信された場合の処理
         if 'entrant' in request.POST.dict().keys():
             entry = Entry(
-            date=now,
+            date=now, 
+            day=Day.objects.get(name=japanese_days[now.weekday()]), 
             state='応募中', 
             cl=cl, 
             ask=ask)
@@ -176,7 +174,6 @@ def specification(request, ask_id):
             mail_context = {
                 'cl': cl, 
                 'ask': ask, 
-                'day': day, 
                 'assumed_courses': assumed_courses
             }
             mail_message_html = render_to_string('substitute/mails/entry_notice.html', mail_context, request)
@@ -227,8 +224,7 @@ def specification(request, ask_id):
 
             mail_subject = '出勤者確定の通知'
             mail_context = {
-                'ask': ask, 
-                'day': day
+                'ask': ask
             }
             mail_message_html = render_to_string('substitute/mails/contract_notice.html', mail_context, request)
             mail_message = strip_tags(mail_message_html)
@@ -244,9 +240,6 @@ def specification(request, ask_id):
         
         return HttpResponseRedirect(reverse('substitute:home', args=[now.year, now.month]))
     
-    day = japanese_days[ask.date.weekday()]
-    assumed_courses = ask.client.courses.filter(day=day)
-    
     conditions = ask.conditions.all()
     qualifications = cl.qualifications.all()
     conditions = [condition.name for condition in conditions]
@@ -259,9 +252,9 @@ def specification(request, ask_id):
     return render(request, 'substitute/specification.html', {
         'cl': cl, 
         'ask': ask, 
-        'day':day, 
         'assumed_courses': assumed_courses, 
-        'conditions': json.dumps(conditions), 
+        'conditions_json': json.dumps(conditions), 
+        'conditions_all': Condition.objects.all(), 
         'entries': entries, 
         'is_qualified': is_qualified, 
         'is_entry': is_entry
@@ -275,6 +268,7 @@ def revise(request, ask_id):
         form = ReviseForm(request.POST)
         if form.is_valid():
             ask_past.date = form.cleaned_data['date']
+            ask_past.day = Day.objects.get(name=japanese_days[form.cleaned_data['date'].weekday()])
             ask_past.reason = form.cleaned_data['reason']
             ask_past.extra = form.cleaned_data['extra']
             ask_past.conditions.clear()
@@ -294,7 +288,8 @@ def revise(request, ask_id):
     return render(request, 'substitute/revise.html', {
         'ask_past': ask_past, 
         'form': ReviseForm(initial=initial_value), 
-        'conditions': json.dumps(conditions)
+        'conditions_json': json.dumps(conditions), 
+        'conditions_all': Condition.objects.all()
     })
 
 @login_checker
@@ -306,6 +301,7 @@ def make(request):
         if form.is_valid():
             ask = SubstituteAsk(
                 date=form.cleaned_data['date'], 
+                day=Day.objects.get(name=japanese_days[form.cleaned_data['date'].weekday()]), 
                 client=cl, 
                 contractor=None, 
                 reason=form.cleaned_data['reason'], 
@@ -315,12 +311,10 @@ def make(request):
             for condition in form.cleaned_data['conditions']:
                 ask.conditions.add(condition)
 
-            day = japanese_days[ask.date.weekday()]
-            assumed_courses = ask.client.courses.filter(day=day)
+            assumed_courses = ask.client.courses.filter(day=ask.day)
             mail_subject = '新規代行依頼の通知'
             mail_context = {
                 'ask': ask, 
-                'day': day, 
                 'assumed_courses': assumed_courses, 
                 'conditions': ask.conditions.all()
             }
@@ -348,8 +342,7 @@ def confirmAsk(request):
     cl = ClassLeader.objects.get(id=request.session['cl_id'])
     asks = SubstituteAsk.objects.filter(client=cl).order_by('date').reverse()
     entry_nums = [len(ask.entries.all()) for ask in asks]
-    days = [japanese_days[ask.date.weekday()] for ask in asks]
-    ask_values = [{'ask': ask, 'day': day, 'entry_num': entry_num} for (ask, day, entry_num) in zip(asks, days, entry_nums)]
+    ask_values = [{'ask': ask, 'entry_num': entry_num} for (ask, entry_num) in zip(asks, entry_nums)]
     return render(request, 'substitute/confirmAsk.html', {
         'ask_values': ask_values
     })
@@ -358,13 +351,12 @@ def confirmAsk(request):
 def confirmEntry(request):
     cl = ClassLeader.objects.get(id=request.session['cl_id'])
     entries = Entry.objects.filter(cl=cl).order_by('ask__date').reverse()
-    ask_days = days = [japanese_days[entry.ask.date.weekday()] for entry in entries]
-    entry_values = [{'entry': entry, 'ask_day': ask_day} for (entry, ask_day) in zip(entries, ask_days)]
     return render(request, 'substitute/confirmEntry.html', {
-        'entry_values': entry_values
+        'entries': entries
     })
 
 @login_checker
 def logout(request):
     request.session['cl_id'] = None
+    messages.success(request, 'ログアウトが完了しました')
     return HttpResponseRedirect(reverse('substitute:login'))

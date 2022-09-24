@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block body %}
-    <form action="{% url 'substitute:make' %}" method="post" class-"need_check">
+    <form action="{% url 'substitute:make' %}" method="post" class="need-check">
         {% csrf_token %}
         {{ form|crispy }}
         <hr>

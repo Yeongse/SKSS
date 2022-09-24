@@ -5,12 +5,13 @@
     <head>
         <title>SKSS</title>
         <meta charset="utf-8">
+        <script src="{% static 'substitute/script.js' %}"></script>
+        <link rel="icon" href="{% static 'substitute/favicon.ico' %}">
+        <link rel="stylesheet" href="{% static 'substitute/style.css' %}">
         {% load bootstrap4 %}
         {% bootstrap_css %}
         {% bootstrap_javascript jquery='full' %}
-        <link rel="icon" href="{% static 'substitute/favicon.ico' %}">
-        <link rel="stylesheet" href="{% static 'substitute/style.css' %}">
-        <script src="{% static 'substitute/script.js' %}"></script>
+        
         
         {% block head %}
         {% endblock  %}

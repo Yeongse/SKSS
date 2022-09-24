@@ -8,7 +8,7 @@
 
 <p>―――――――――――――――――――――――――――</p>
 <p>代行依頼者: {{ ask.client.name }}</p>
-<p>日付: {{ ask.date }} ({{ day }})</p>
+<p>日付: {{ ask.date }} ({{ ask.day }})</p>
 <p>担当講座: {% for course in assumed_courses %} {{course.name}} {% endfor %}</p>
 <p>―――――――――――――――――――――――――――</p>
 

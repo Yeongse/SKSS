@@ -3,7 +3,7 @@
 {% block head %}
     <script>
         document.addEventListener('DOMContentLoaded', function(){
-            const conditions = JSON.parse('{{ conditions|safe }}');
+            const conditions = JSON.parse('{{ conditions_json|safe }}');
             conditions.forEach(condition => {
                 element = document.getElementById(condition);
                 element.style.backgroundColor = "#fd7e00";
@@ -25,11 +25,11 @@
             <tbody>
                 <tr>
                     <td>日付</td>
-                    <td>{{ ask.date }} ({{ day }})</td>
+                    <td>{{ ask.date }} ({{ ask.day }})</td>
                 </tr>
                 <tr>
                     <td>依頼者</td>
-                    <td>{{ ask.client.name }}</td>
+                    <td>{{ ask.client }}</td>
                 </tr>
                 <tr>
                     <td>担当講座</td>
@@ -53,13 +53,9 @@
                     <td>応募条件</td>
                     <td>
                         <ul style="display: flex;">
-                            <li><p class="condition" id="K1, 2担当">K1, 2担当</p></li>
-                            <li><p class="condition" id="K3担当">K3担当</p></li>
-                            <li><p class="condition" id="理系">理系</p></li>
-                            <li><p class="condition" id="文系">文系</p></li>
-                            <li><p class="condition" id="医系">医系</p></li>
-                            <li><p class="condition" id="1, 2回生">1, 2回生</p></li>
-                            <li><p class="condition" id="3回生以上">3回生以上</p></li>
+                            {% for condition in conditions_all %}
+                                <li><p class="condition" id="{{ condition }}">{{ condition }}</p></li>
+                            {% endfor %}
                         </ul>
                     </td>
                 </tr>
@@ -87,7 +83,7 @@
                         <td>
                             {% if ask.client == cl %}
                                 {% if ask.contractor == null %}
-                                    <form action="{% url 'substitute:specification' ask.id %}" method="post" class="need_check">
+                                    <form action="{% url 'substitute:specification' ask.id %}" method="post" class="need-check">
                                         {% csrf_token %}
                                         <input type="hidden" name="contractor" value="{{ entry.id }}">
                                         <input type="submit" value="このCLに依頼する" id="contract" class="btn btn-primary" style="margin: 3px;">
@@ -133,7 +129,7 @@
                 })
             </script>  
         {% endif %}
-        <form action="{% url 'substitute:specification' ask.id %}" method="post" class="need_check">
+        <form action="{% url 'substitute:specification' ask.id %}" method="post" class="need-check">
             {% csrf_token %}
             <input type="hidden" name="entrant" value="{{ cl.id }}">
             <input type="submit" value="この代行依頼に応募する" id="entry">

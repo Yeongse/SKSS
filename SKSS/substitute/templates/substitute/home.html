@@ -120,17 +120,17 @@
                 </tr>
             </thead>
             <tbody>
-                {% for ask_value in ask_values_after_now %}
+                {% for ask in asks_after_now %}
                     <tr>
-                        <td>{% if ask_value.ask.contractor == null %} &#9675; {% else %} X {% endif %}</td>
-                        <td>{{ ask_value.ask.date }} ({{ ask_value.day }})</td>
-                        <td>{{ ask_value.ask.client }}</td>
-                        <td><a href="{% url 'substitute:specification' ask_value.ask.id %}">詳細を見る</a></td>
+                        <td>{% if ask.contractor == null %} &#9675; {% else %} X {% endif %}</td>
+                        <td>{{ ask.date }} ({{ ask.day }})</td>
+                        <td>{{ ask.client }}</td>
+                        <td><a href="{% url 'substitute:specification' ask.id %}">詳細を見る</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-        {% for ask_value in ask_values_after_now %}
+        {% for ask in asks_after_now %}
         {% empty %}
             <p>日時が今日以降の代行依頼はありません</p>
         {% endfor %}
