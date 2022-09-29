@@ -123,7 +123,7 @@
                 {% for ask in asks_after_now %}
                     <tr>
                         <td>{% if ask.contractor == null %} &#9675; {% else %} X {% endif %}</td>
-                        <td>{{ ask.date }} ({{ ask.day }})</td>
+                        <td>{{ ask.date | date:"m/d" }} ({{ ask.day }})</td>
                         <td>{{ ask.client }}</td>
                         <td><a href="{% url 'substitute:specification' ask.id %}">詳細を見る</a></td>
                     </tr>

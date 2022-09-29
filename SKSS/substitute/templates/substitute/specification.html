@@ -25,7 +25,7 @@
             <tbody>
                 <tr>
                     <td>日付</td>
-                    <td>{{ ask.date }} ({{ ask.day }})</td>
+                    <td>{{ ask.date | date:"m/d" }} ({{ ask.day }})</td>
                 </tr>
                 <tr>
                     <td>依頼者</td>
@@ -78,7 +78,7 @@
             <tbody>
                 {% for entry in entries %}
                     <tr>
-                        <td>{{ entry.date }}</td>
+                        <td>{{ entry.date | date:"m/d" }}</td>
                         <td>{{ entry.cl.name }}</td>
                         <td>
                             {% if ask.client == cl %}

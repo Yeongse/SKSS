@@ -16,7 +16,7 @@
             <tbody>
                 {% for ask in asks_past %}
                     <tr>
-                        <td>{{ ask.date }} ({{ ask.day }})</td>
+                        <td>{{ ask.date | date:"m/d" }} ({{ ask.day }})</td>
                         <td>{{ ask.client }}</td>
                         <td><a href="{% url 'substitute:specification' ask.id %}">詳細を見る</a></td>
                     </tr>

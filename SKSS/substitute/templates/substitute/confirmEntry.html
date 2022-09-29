@@ -26,9 +26,9 @@
         <tbody>
             {% for entry in entries %}
                 <tr>
-                    <td>{{ entry.ask.date }} ({{ entry.ask.day }})</td>
+                    <td>{{ entry.ask.date | date:"m/d" }} ({{ entry.ask.day }})</td>
                     <td>{{ entry.ask.client }}</td>
-                    <td>{{ entry.date }}</td>
+                    <td>{{ entry.date | date:"m/d" }}</td>
                     <td>{{ entry.state }}</td>
                     <td><a href="{% url 'substitute:specification' entry.ask.id %}">詳細を見る</a></td>
                 </tr>

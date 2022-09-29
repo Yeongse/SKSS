@@ -27,7 +27,7 @@
             <tr>
                 <td>{% if ask_value.ask.contractor == null %} 募集中 {% else %} 委託者確定済 {% endif %}</td>
                 <td>{{ ask_value.entry_num }}</td>
-                <td>{{ ask_value.ask.date }} ({{ ask_value.ask.day }})</td>
+                <td>{{ ask_value.ask.date | date:"m/d" }} ({{ ask_value.ask.day }})</td>
                 <td><a href="{% url 'substitute:specification' ask_value.ask.id %}">詳細を見る</a></td>
             </tr>
             {% endfor %}
