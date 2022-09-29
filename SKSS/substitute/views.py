@@ -1,11 +1,8 @@
-from ast import Sub
-from pickletools import read_uint1
-from tkinter.messagebox import askyesno
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth.hashers import make_password, check_password
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
