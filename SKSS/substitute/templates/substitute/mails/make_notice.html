@@ -6,14 +6,14 @@
 <p>この度は新たに代行依頼が作成されました。</p>
 <p>詳細は以下の通りです。</p>
 
-<p>―――――――――――――――――――――――――――</p>
+<p>------------</p>
 <p>代行依頼者: {{ ask.client.name }}</p>
 <p>日付: {{ ask.date | date:"m/d" }} ({{ ask.day }})</p>
 <p>担当講座: {% for course in assumed_courses %} {{ course.name }} {% endfor %}</p>
 <p>代行理由: {{ ask.reason }}</p>
 <p>特筆事項: {{ ask.extra }}</p>
 <p>応募条件: {% for condition in conditions %} {{ condition }} {% endfor %}</p>
-<p>―――――――――――――――――――――――――――</p>
+<p>------------</p>
 
 <p>上記の代行への出勤を希望する方はシステムにて応募ください。</p>
 <p>皆様のご協力をよろしくお願いします。</p>
