@@ -82,7 +82,6 @@ def login(request):
     return render(request, 'substitute/login.html', {
         'form': LoginForm()
     })
-    return 0
 
 @login_checker
 def initialize(request):
