@@ -13,10 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
+from django.http import HttpResponseRedirect
 from django.urls import path, include
+
+def redirect_to_substitute(request):
+    return HttpResponseRedirect('https://skobe-cl-sub.tk/substitute')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('substitute/', include('substitute.urls'))
+    path('substitute/', include('substitute.urls'), name='substitute'), 
+    path('', redirect_to_substitute)
 ]

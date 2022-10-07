@@ -20,7 +20,7 @@ env = environ.Env()
 env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
+ALLOWED_HOSTS = ['*']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'bootstrap_datepicker_plus', 
     'bootstrap4', 
     'substitute', 
+    'sslserver'
 ]
 
 MIDDLEWARE = [

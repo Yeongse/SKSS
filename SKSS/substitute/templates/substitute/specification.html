@@ -118,7 +118,16 @@
                     button = document.getElementById("entry");
                     button.disabled = true;
                 })
-            </script>    
+            </script>
+        {% endif %}
+        {% if ask.contractor != null %}
+            <p>出勤者が既に確定しています。</p>
+            <script>
+                document.addEventListener('DOMContentLoaded', function(){
+                    button = document.getElementById("entry");
+                    button.disabled = true;
+                })
+            </script>
         {% endif %}
         {% if is_entry %}
             <p>あなたは既に応募済みです</p>
@@ -127,7 +136,7 @@
                     button = document.getElementById("entry");
                     button.disabled = true;
                 })
-            </script>  
+            </script>
         {% endif %}
         <form action="{% url 'substitute:specification' ask.id %}" method="post" class="need-check">
             {% csrf_token %}
