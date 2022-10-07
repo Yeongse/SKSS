@@ -141,7 +141,7 @@
         <form action="{% url 'substitute:specification' ask.id %}" method="post" class="need-check">
             {% csrf_token %}
             <input type="hidden" name="entrant" value="{{ cl.id }}">
-            <input type="submit" value="この代行依頼に応募する" id="entry">
+            <input type="submit" value="この代行依頼に応募する" id="entry" class="btn btn-primary">
         </form>
     {% endif %}
 
