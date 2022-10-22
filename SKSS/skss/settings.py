@@ -98,6 +98,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+SESSION_COOKIE_AGE = 3600
 
 
 # Password validation

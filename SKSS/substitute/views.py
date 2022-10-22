@@ -15,7 +15,6 @@ from .models import Grade, Day, Level, Subject, Condition, Course, ClassLeader, 
 from .forms import LoginForm, InitializeForm, MakeForm, ReviseForm
 
 import datetime
-now = datetime.datetime.now()
 japanese_days = ['月', '火', '水', '木', '金', '土', '日']
 
 def login_checker(func):
@@ -47,9 +46,11 @@ def get_is_qualified(_conditions, _qualifications):
 
 @login_checker
 def index(request):
+    now = datetime.datetime.now()
     return HttpResponseRedirect(reverse('substitute:home', args=[now.year, now.month]))
 
 def login(request):
+    now = datetime.datetime.now()
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -85,6 +86,7 @@ def login(request):
 
 @login_checker
 def initialize(request):
+    now = datetime.datetime.now()
     message = ""
     cl = ClassLeader.objects.get(id=request.session['cl_id'])
 
@@ -113,6 +115,8 @@ def initialize(request):
 
 @login_checker
 def home(request, year, month):
+    now = datetime.datetime.now()
+
     from . import mixins
     cl = ClassLeader.objects.get(id=request.session['cl_id'])
 
@@ -142,6 +146,7 @@ def home(request, year, month):
 # 過去のものはデータ数がエグくなるから別ページに
 @login_checker
 def past(request):
+    now = datetime.datetime.now()
     asks_past = SubstituteAsk.objects.filter(date__lt=now).order_by('date').reverse()
 
     return render(request, 'substitute/past.html', {
@@ -150,6 +155,7 @@ def past(request):
 
 @login_checker
 def specification(request, ask_id):
+    now = datetime.datetime.now()
     cl = ClassLeader.objects.get(id=request.session['cl_id'])
     ask = SubstituteAsk.objects.get(id=ask_id)
     assumed_courses = ask.client.courses.filter(day=ask.day)
@@ -258,6 +264,7 @@ def specification(request, ask_id):
 
 @login_checker
 def revise(request, ask_id):
+    now = datetime.datetime.now()
     ask_past = SubstituteAsk.objects.get(id=ask_id)
 
     if request.method == 'POST':
@@ -290,6 +297,7 @@ def revise(request, ask_id):
 
 @login_checker
 def make(request):
+    now = datetime.datetime.now()
     cl = ClassLeader.objects.get(id=request.session['cl_id'])
 
     if request.method == 'POST':
@@ -335,6 +343,7 @@ def make(request):
 
 @login_checker
 def confirmAsk(request):
+    now = datetime.datetime.now()
     cl = ClassLeader.objects.get(id=request.session['cl_id'])
     asks = SubstituteAsk.objects.filter(client=cl).order_by('date').reverse()
     entry_nums = [len(ask.entries.all()) for ask in asks]
@@ -345,6 +354,7 @@ def confirmAsk(request):
 
 @login_checker
 def confirmEntry(request):
+    now = datetime.datetime.now()
     cl = ClassLeader.objects.get(id=request.session['cl_id'])
     entries = Entry.objects.filter(cl=cl).order_by('ask__date').reverse()
     return render(request, 'substitute/confirmEntry.html', {
