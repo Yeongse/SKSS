@@ -19,7 +19,7 @@ from django.http import HttpResponseRedirect
 from django.urls import path, include
 
 def redirect_to_substitute(request):
-    return HttpResponseRedirect('https://skobe-cl-sub.tk/substitute')
+    return HttpResponseRedirect('https://skobe-cl-sub.net/substitute')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
